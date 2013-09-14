@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 def count(word):
     vogais = u'aeiouãâáàêéíóõôúÃÁÉÍÓÕÔÊÂÚ'
     ditongos = u'ia ua uo ai ei oi ou ae au ao éi ei ui oi ói ou ãi ãe ão iu eu õe ui'.split()
