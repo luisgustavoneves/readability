@@ -43,7 +43,7 @@ def get_sentences(text=''):
     sentences = tokenizer.tokenize(text)
     return sentences
 
-def count_syllables(words):
+def count_syllables(words, lang):
     syllableCount = 0
     for word in words:
         if lang == 'pt':
