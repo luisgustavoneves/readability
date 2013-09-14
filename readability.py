@@ -7,7 +7,7 @@ from utils import get_words
 from utils import get_sentences
 from utils import count_syllables
 from utils import count_complex_words
-
+from guess_language import guessLanguage
 
 class Readability:
     analyzedVars = {}
@@ -16,13 +16,16 @@ class Readability:
         self.analyze_text(text)
 
     def analyze_text(self, text):
+        lang = guessLanguage(text)
         words = get_words(text)
         char_count = get_char_count(words)
         word_count = len(words)
         sentence_count = len(get_sentences(text))
-        syllable_count = count_syllables(words)
+        syllable_count = count_syllables(words, lang)
         complexwords_count = count_complex_words(text)
         avg_words_p_sentence = word_count/sentence_count
+        syllables_per_hundred_words = syllable_count*100./word_count
+        sentences_per_hundred_words = sentence_count*100./word_count
         
         self.analyzedVars = {
             'words': words,
@@ -31,7 +34,9 @@ class Readability:
             'sentence_cnt': float(sentence_count),
             'syllable_cnt': float(syllable_count),
             'complex_word_cnt': float(complexwords_count),
-            'avg_words_p_sentence': float(avg_words_p_sentence)
+            'avg_words_p_sentence': float(avg_words_p_sentence),
+            'syllables_per_hundred_words': syllables_per_hundred_words,
+            'sentences_per_hundred_words': sentences_per_hundred_words
         }
 
     def ARI(self):
@@ -76,7 +81,11 @@ class Readability:
         score = longwords / self.analyzedVars['sentence_cnt']
         return score
         
-
+    def FernandesHuerta(self):
+        score = 0.0
+        score = 206.84 - (.60 * (self.analyzedVars['syllables_per_hundred_words'])) - (1.02 * (self.analyzedVars['sentences_per_hundred_words']))
+        return round(score, 4)
+        
 if __name__ == "__main__":
     text = """We are close to wrapping up our 10 week Rails Course. This week we will cover a handful of topics commonly encountered in Rails projects. We then wrap up with part 2 of our Reddit on Rails exercise!  By now you should be hard at work on your personal projects. The students in the course just presented in front of the class with some live demos and a brief intro to to the problems their app were solving. Maybe set aside some time this week to show someone your progress, block off 5 minutes and describe what goal you are working towards, the current state of the project (is it almost done, just getting started, needs UI, etc.), and then show them a quick demo of the app. Explain what type of feedback you are looking for (conceptual, design, usability, etc.) and see what they have to say.  As we are wrapping up the course you need to be focused on learning as much as you can, but also making sure you have the tools to succeed after the class is over."""
 
@@ -85,6 +94,7 @@ if __name__ == "__main__":
     print '"%s"\n' % text
     print 'ARI: ', rd.ARI()
     print 'FleschReadingEase: ', rd.FleschReadingEase()
+    print 'FernandesHuerta: ', rd.FernandesHuerta()
     print 'FleschKincaidGradeLevel: ', rd.FleschKincaidGradeLevel()
     print 'GunningFogIndex: ', rd.GunningFogIndex()
     print 'SMOGIndex: ', rd.SMOGIndex()
