@@ -8,13 +8,7 @@ import nltk
 
 from nltk.tokenize import RegexpTokenizer
 import syllables_en
-
-def count(word):
-    vogais = u'aeiouãâáàêéíóõôúÃÁÉÍÓÕÔÊÂÚ'
-    ditongos = u'ia ua uo ai ei oi ou ae au ao éi ei ui oi ói ou ãi ãe ão iu eu õe ui'.split()
-    v = sum((word.count(s) for s in vogais))
-    d = sum((word.count(s) for s in ditongos))
-    return v-d
+import syllables_pt
 
 TOKENIZER = RegexpTokenizer('(?u)\W+|\$[\d\.]+|\S+')
 SPECIAL_CHARS = ['.', ',', '!', '?']
@@ -47,7 +41,7 @@ def count_syllables(words, lang):
     syllableCount = 0
     for word in words:
         if lang == 'pt':
-            syllableCount += count(word)
+            syllableCount += syllables_pt.count(word)
         else:
             syllableCount += syllables_en.count(word)
     return syllableCount
