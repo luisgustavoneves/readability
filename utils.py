@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """
 utility functions for breaking down a given block of text
 into it's component syntactic parts.
@@ -7,6 +8,13 @@ import nltk
 
 from nltk.tokenize import RegexpTokenizer
 import syllables_en
+
+def count(word):
+    vogais = u'aeiouãâáàêéíóõôúÃÁÉÍÓÕÔÊÂÚ'
+    ditongos = u'ia ua uo ai ei oi ou ae au ao éi ei ui oi ói ou ãi ãe ão iu eu õe ui'.split()
+    v = sum((word.count(s) for s in vogais))
+    d = sum((word.count(s) for s in ditongos))
+    return v-d
 
 TOKENIZER = RegexpTokenizer('(?u)\W+|\$[\d\.]+|\S+')
 SPECIAL_CHARS = ['.', ',', '!', '?']
@@ -38,7 +46,10 @@ def get_sentences(text=''):
 def count_syllables(words):
     syllableCount = 0
     for word in words:
-        syllableCount += syllables_en.count(word)
+        if lang == 'pt':
+            syllableCount += count(word)
+        else:
+            syllableCount += syllables_en.count(word)
     return syllableCount
 
 #This method must be enhanced. At the moment it only
@@ -53,7 +64,7 @@ def count_complex_words(text=''):
     
     for word in words:          
         cur_word.append(word)
-        if count_syllables(cur_word)>= 3:
+        if count_syllables(cur_word, 'en')>= 3:
             
             #Checking proper nouns. If a word starts with a capital letter
             #and is NOT at the beginning of a sentence we don't add it
