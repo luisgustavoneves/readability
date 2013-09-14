@@ -81,7 +81,7 @@ class Readability:
         score = longwords / self.analyzedVars['sentence_cnt']
         return score
         
-    def FernandesHuerta(self):
+    def FernandezHuerta(self):
         score = 0.0
         score = 206.84 - (.60 * (self.analyzedVars['syllables_per_hundred_words'])) - (1.02 * (self.analyzedVars['sentences_per_hundred_words']))
         return round(score, 4)
@@ -94,7 +94,7 @@ if __name__ == "__main__":
     print '"%s"\n' % text
     print 'ARI: ', rd.ARI()
     print 'FleschReadingEase: ', rd.FleschReadingEase()
-    print 'FernandesHuerta: ', rd.FernandesHuerta()
+    print 'FernandezHuerta: ', rd.FernandezHuerta()
     print 'FleschKincaidGradeLevel: ', rd.FleschKincaidGradeLevel()
     print 'GunningFogIndex: ', rd.GunningFogIndex()
     print 'SMOGIndex: ', rd.SMOGIndex()
