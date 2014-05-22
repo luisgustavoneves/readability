@@ -5,8 +5,8 @@ into it's component syntactic parts.
 """
 
 import nltk
-
-from nltk.tokenize import RegexpTokenizer
+from nltk.tokenize import word_tokenize, wordpunct_tokenize, RegexpTokenizer
+from nltk.tokenize.punkt import PunktSentenceTokenizer, PunktWordTokenizer
 import syllables_en
 import syllables_pt
 
@@ -16,12 +16,12 @@ SPECIAL_CHARS = ['.', ',', '!', '?']
 def get_char_count(words):
     characters = 0
     for word in words:
-        characters += len(word.decode("utf-8"))
+        characters += len(word)
     return characters
     
 def get_words(text=''):
     words = []
-    words = TOKENIZER.tokenize(text)
+    words = PunktWordTokenizer().tokenize(text)
     filtered_words = []
     for word in words:
         if word in SPECIAL_CHARS or word == " ":
@@ -41,7 +41,10 @@ def count_syllables(words, lang):
     syllableCount = 0
     for word in words:
         if lang == 'pt':
-            syllableCount += syllables_pt.count(word)
+            try:
+                syllableCount += syllables_pt.count(word)
+            except UnicodeDecodeError:
+                syllableCount += syllables_pt.count(word.decode('utf8', 'ignore'))
         else:
             syllableCount += syllables_en.count(word)
     return syllableCount
@@ -67,9 +70,14 @@ def count_complex_words(text=''):
                 complex_words += 1
             else:
                 for sentence in sentences:
-                    if str(sentence).startswith(word):
-                        found = True
-                        break
+                    try:
+                        if str(sentence).startswith(word):
+                            found = True
+                            break
+                    except UnicodeEncodeError:
+                        if str(sentence).startswith(word.encode('utf8')):
+                            found = True
+                            break
                 if found: 
                     complex_words += 1
                     found = False
